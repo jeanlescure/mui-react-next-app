@@ -14,8 +14,21 @@ export default shade => ({
       fontFamily: '"Helvetica", "Arial", sans-serif',
     },
     a: {
-      color: palette.common.teal,
+      color: palette.common.teal['500'],
       textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+    '.page-content': {
+      paddingTop: '65px',
+      flex: '1 1 100%',
+      margin: '0 auto',
+      '@media (min-width: 948px)': {
+        maxWidth: '900px',
+      },
+      '@media (min-width: 600px)': {
+        paddingLeft: '24px',
+        paddingRight: '24px',
+      },
     },
   },
 });

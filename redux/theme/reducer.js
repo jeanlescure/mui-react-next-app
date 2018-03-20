@@ -10,8 +10,9 @@ export default function theme(state: types.stateType = {}, action: types.actionT
     case types.THEME_SET_SUCCESS:
       return {
         name: action.name,
-        shade: action.shade,
         theme: action.theme,
+        shade: action.shade,
+        direction: action.direction,
         inProgress: false,
       };
 

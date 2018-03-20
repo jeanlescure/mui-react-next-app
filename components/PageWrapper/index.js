@@ -17,8 +17,9 @@ const StyleWrapper = (props) => {
     classes,
     ...otherProps,
   } = props;
+
   return (
-    <div {...otherProps}/>
+    <div className="page-content" {...otherProps}/>
   );
 };
 
@@ -37,25 +38,52 @@ const ProviderWrapper = (PageWrapperComponent) => {
 }
 
 class PageWrapper extends Component {
+  state = {
+    mobileOpen: false,
+  };
+
+  handleDrawerToggle = () => {
+    this.setState({ mobileOpen: !this.state.mobileOpen });
+  };
+
+  handleTogglePaletteType = () => {
+    const {themeState: {shade, direction}} = this.props;
+    this.initTheme((shade === 'light')? 'dark' : 'light', direction);
+  };
+
+  handleToggleDirection = () => {
+    const {themeState: {shade, direction}} = this.props;
+    this.initTheme(shade, (direction === 'ltr')? 'rtl' : 'ltr');
+  };
+
   componentWillMount() {
-    this.initTheme('light');
+    this.initTheme('light', 'ltr');
   }
 
-  initTheme = (shade: string) => {
-    const theme = main;
+  initTheme = (shade: string, direction: string) => {
+    const theme = Object.assign({}, main, {direction});
     theme.palette = Object.assign({}, main.palette, {type: shade});
 
-    this.props.themeSet('main', shade, theme);
+    this.props.themeSet('main', theme, shade, direction);
   };
 
   render() {
     const {
-      children,
-      themeState: {
-        shade,
-        theme,
+      handleDrawerToggle,
+      handleTogglePaletteType,
+      handleToggleDirection,
+      props: {
+        classes,
+        children,
+        title,
+        themeState: {
+          shade,
+          theme,
+        },
       },
-    } = this.props;
+    } = this;
+
+    const disablePermanent = (title)? false : true;
 
     const muiTheme = (theme)? createMuiTheme(theme) : null;
     const ShadedStyleWrapper = (muiTheme)? withStyles(muiTheme.styles(shade))(StyleWrapper) : (<div></div>);
@@ -66,20 +94,30 @@ class PageWrapper extends Component {
 
     return (
       <MuiThemeProvider theme={muiTheme}>
-        <AppBar/>
         <div
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-          }} 
-          className="page-content"
+            alignItems: 'stretch',
+            minHeight: '100vh',
+            width: '100%',
+          }}
         >
+          <AppBar
+            pageTitle={title}
+            handleDrawerToggle={handleDrawerToggle}
+            handleTogglePaletteType={handleTogglePaletteType}
+            handleToggleDirection={handleToggleDirection}
+          />
+          <SideNav
+            disablePermanent={disablePermanent}
+            onClose={this.handleDrawerToggle}
+            mobileOpen={this.state.mobileOpen}
+            pageTitle={title}
+          />
           <ShadedStyleWrapper>
             {children}
           </ShadedStyleWrapper>
         </div>
-        <SideNav/>
       </MuiThemeProvider>
     );
   }

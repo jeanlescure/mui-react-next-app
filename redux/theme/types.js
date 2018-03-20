@@ -6,8 +6,9 @@ export type actionType = {
   type: string,
   inProgress: ?boolean,
   name: ?string, 
-  shade: ?string,
   theme: ?mixed,
+  shade: ?string,
+  direction: ?string,
   error: ?{
     message: string,
   },
